@@ -5,9 +5,7 @@ import java.time.LocalDate;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
-/**
- * Film.
- */
+
 @Data
 @Builder
 public class Film {
