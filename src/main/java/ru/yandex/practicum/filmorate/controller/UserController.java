@@ -16,7 +16,7 @@ import java.util.Map;
 @RequestMapping("users")
 @Slf4j
 public class UserController {
-    private long id = 0;
+    private long id = 1;
     private Map<Long, User> users = new HashMap<>();
 
     @GetMapping
