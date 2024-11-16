@@ -3,11 +3,13 @@ package ru.yandex.practicum.filmorate.model;
 import java.time.LocalDate;
 
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Data;
 /**
  * Film.
  */
 @Data
+@Builder
 public class Film {
 
     private long id;
