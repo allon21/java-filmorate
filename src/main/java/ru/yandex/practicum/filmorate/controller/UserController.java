@@ -16,7 +16,7 @@ import java.util.Map;
 @RequestMapping("users")
 @Slf4j
 public class UserController {
-    private long Id = 0;
+    private long id = 0;
     private Map<Long, User> users = new HashMap<>();
 
     @GetMapping
@@ -48,7 +48,7 @@ public class UserController {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-        user.setId(++Id);
+        user.setId(++id);
         users.put(user.getId(), user);
         log.info("Пользователь {} создан с ID {}", user.getLogin(), user.getId());
         return user;
