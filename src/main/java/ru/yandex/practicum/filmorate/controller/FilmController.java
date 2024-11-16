@@ -19,7 +19,7 @@ public class FilmController {
     @NotNull
     private final Map<Long, Film> films = new HashMap<>();
     private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
-    private long id = 1;
+    private long id = 0;
 
     @GetMapping
     public List<Film> getAllFilms() {
@@ -42,7 +42,7 @@ public class FilmController {
     @PostMapping
     public Film addFilm(@RequestBody Film film) {
         validateFilm(film);
-        film.setId(id);
+        film.setId(++id);
         films.put(film.getId(), film);
         log.info("Фильм добавлен: {}", film);
         return film;
