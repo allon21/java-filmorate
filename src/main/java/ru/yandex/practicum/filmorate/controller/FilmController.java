@@ -20,7 +20,6 @@ import java.util.Map;
 public class FilmController {
     @NotNull
     private final Map<Long, Film> films = new HashMap<>();
-    private long id = 0;
 
     @GetMapping
     public List<Film> getAllFilms() {
@@ -33,6 +32,9 @@ public class FilmController {
         if (!films.containsKey(film.getId())) {
             log.error("Попытка обновления несуществующего фильма с ID: {}", film.getId());
             throw new NotFoundException("Фильм с таким ID не найден");
+        }
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года;");
         }
         films.put(film.getId(), film);
         log.info("Обновлен фильм с ID: {}", film.getId());
@@ -48,10 +50,19 @@ public class FilmController {
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года;");
         }
-        film.setId(++id);
+        film.setId(getNextId());
         films.put(film.getId(), film);
         log.info("Фильм добавлен: {}", film);
         return film;
+    }
+
+    private long getNextId() {
+        long currentMaxId = films.keySet()
+                .stream()
+                .mapToLong(id -> id)
+                .max()
+                .orElse(0);
+        return ++currentMaxId;
     }
 
 }
