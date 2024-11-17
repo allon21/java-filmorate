@@ -39,6 +39,7 @@ public class UserController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public User create(@Valid @RequestBody User user) {
         if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());

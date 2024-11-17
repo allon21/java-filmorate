@@ -44,7 +44,7 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film addFilm(@RequestBody Film film) {
+    public Film addFilm(@Valid @RequestBody Film film) {
         if (films.containsValue(film)) {
             log.error("Попытка добавить фильм, который уже существует: {}", film.getName());
             throw new ValidationException("Такой фильм уже добавлен.");
