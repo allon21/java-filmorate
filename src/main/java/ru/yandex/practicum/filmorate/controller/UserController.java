@@ -49,7 +49,15 @@ public class UserController {
             log.error("Ошибка валидации: дата рождения не может быть в будущем.");
             throw new ValidationException("Дата рождения не может быть в будущем.");
         }
+        if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
+            log.error("Ошибка валидации: электронная почта не может быть пустой и должна содержать символ @.");
+            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @.");
+        }
 
+        if (user.getLogin().isBlank() || user.getLogin().matches(".*\\s+.*")) {
+            log.error("Ошибка валидации: логин не может быть пустым и содержать пробелы.");
+            throw new ValidationException("Логин не может быть пустым и содержать пробелы.");
+        }
         if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }

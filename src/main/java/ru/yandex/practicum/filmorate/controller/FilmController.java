@@ -50,6 +50,14 @@ public class FilmController {
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года;");
         }
+        if (film.getDuration() <= 0) {
+            log.error("Ошибка валидации: продолжительность фильма должна быть положительным числом");
+            throw new ValidationException("Продолжительность фильма должна быть положительным числом");
+        }
+        if (film.getDescription() != null && film.getDescription().length() > 200) {
+            log.error("Ошибка валидации: максимальная длина описания — 200 символов");
+            throw new ValidationException("Максимальная длина описания — 200 символов");
+        }
         film.setId(getNextId());
         films.put(film.getId(), film);
         log.info("Фильм добавлен: {}", film);
