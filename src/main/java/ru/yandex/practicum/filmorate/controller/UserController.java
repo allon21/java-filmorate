@@ -2,12 +2,12 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +28,7 @@ public class UserController {
     @PutMapping
     public User update(@Valid @RequestBody User user) {
         if (!users.containsKey(user.getId())) {
+            log.error("Пользователь с ID {} не найден для обновления.", user.getId());
             throw new NotFoundException("Пользователь с таким ID не найден");
         }
         if (user.getName() == null || user.getName().isEmpty()) {
@@ -39,8 +40,16 @@ public class UserController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     public User create(@Valid @RequestBody User user) {
+        if (users.containsValue(user)) {
+            log.error("Попытка создать пользователя, который уже существует: {}", user.getLogin());
+            throw new ValidationException("Такой пользователь уже существует.");
+        }
+        if (user.getBirthday().isAfter(LocalDate.now())) {
+            log.error("Ошибка валидации: дата рождения не может быть в будущем.");
+            throw new ValidationException("Дата рождения не может быть в будущем.");
+        }
+
         if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
@@ -57,16 +66,6 @@ public class UserController {
                 .max()
                 .orElse(0);
         return ++currentMaxId;
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-                errors.put(error.getField(), error.getDefaultMessage())
-        );
-        return errors;
     }
 
 }
