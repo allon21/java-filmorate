@@ -47,6 +47,10 @@ public class FilmController {
             log.error("Попытка добавить фильм, который уже существует: {}", film.getName());
             throw new ValidationException("Такой фильм уже добавлен.");
         }
+        if (film.getName() == null || film.getName().isBlank()) {
+            log.error("Ошибка валидации: название фильма не может быть пустым");
+            throw new ValidationException("Название фильма не может быть пустым");
+        }
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года;");
         }
