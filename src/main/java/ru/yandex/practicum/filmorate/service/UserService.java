@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.EmptyIdException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -72,7 +73,7 @@ public class UserService {
 
     public List<User> getCommonFriends(Integer user, Integer friend) {
         if (user <= 0 || friend <= 0) {
-            throw new NotFoundException("id должен быть > 0.");
+            throw new EmptyIdException();
         }
         return userStorage.getCommonFriends(user, friend);
     }
