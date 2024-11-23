@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.EmptyIdException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -72,7 +73,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public List<User> getUserFriends(Integer id) {
         if (id <= 0) {
-            throw new ValidationException("id не может быть меньше 0");
+            throw new EmptyIdException();
         }
         Set<Integer> users = findUserById(id).getFriends();
         List<User> usersFriends = new ArrayList<>();
@@ -88,7 +89,11 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User findUserById(Integer id) {
         if (id <= 0) {
-            throw new NotFoundException("id не может быть меньше 0");
+            throw new EmptyIdException();
+        }
+        if (!users.containsKey(id)) {
+            throw new NotFoundException(String.format("Пользователь с запрашиваемым id=%d не зарегестрирован." +
+                    " Кол-во пользователей: %d", id, users.size()));
         }
         return users.get(id);
     }
