@@ -72,7 +72,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public List<User> getUserFriends(Integer id) {
         if (id <= 0) {
-            throw new NotFoundException("id не может быть меньше 0");
+            throw new ValidationException("id не может быть меньше 0");
         }
         Set<Integer> users = findUserById(id).getFriends();
         List<User> usersFriends = new ArrayList<>();

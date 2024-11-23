@@ -32,6 +32,10 @@ public class InMemoryFilmStorage implements FilmStorage {
         return getAllFilms().stream().toList();
     }
 
+    @Override
+    public Map<Long, Film> getFilms() {
+        return films;
+    }
 
     @Override
     public Film updateFilm(Film film) {

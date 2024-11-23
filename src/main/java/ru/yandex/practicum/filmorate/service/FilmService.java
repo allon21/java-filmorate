@@ -83,7 +83,13 @@ public class FilmService {
     }
 
     public Film findFilmById(Integer id) {
-        return null;
+        if (id <= 0) {
+            throw new ValidationException("id должен быть > 0.");
+        }
+        if (!filmStorage.getFilms().containsKey(id)) {
+            throw new NotFoundException("Фильм с запрашиваемым " + id + " отсутствует.)");
+        }
+        return filmStorage.getFilms().get(id);
     }
 
 }
