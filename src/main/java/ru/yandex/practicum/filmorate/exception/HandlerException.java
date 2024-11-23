@@ -35,7 +35,7 @@ public class HandlerException {
     }
 
     @ExceptionHandler(EmptyIdException.class)
-    public ResponseEntity<?> EmptyIdException(EmptyIdException e) {
+    public ResponseEntity<?> emptyIdException(EmptyIdException e) {
         Map<String, String> errors = new HashMap<>();
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
     }
