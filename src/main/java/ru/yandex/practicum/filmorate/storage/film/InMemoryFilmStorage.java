@@ -7,10 +7,8 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -29,7 +27,11 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public List<Film> getTopFilms(int count) {
-        return getAllFilms().stream().toList();
+        var films = new ArrayList<>(this.films.values());
+        return films.stream()
+                .sorted(Comparator.comparing(Film::getFilmsLikes).reversed())
+                .limit(count)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -61,7 +63,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
-        if (films.containsValue(film)) {
+        if (films.containsKey(film.getId())) {
             log.error("Попытка добавить фильм, который уже существует: {}", film.getName());
             throw new ValidationException("Такой фильм уже добавлен.");
         }

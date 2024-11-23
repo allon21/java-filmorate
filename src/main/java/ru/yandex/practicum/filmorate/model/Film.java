@@ -24,4 +24,8 @@ public class Film {
     private int duration;
     @Builder.Default
     private Set<Integer> idUsersLikedFilm = new HashSet<>();
+
+    public static Integer getFilmsLikes(Film film) {
+        return film.getIdUsersLikedFilm().size();
+    }
 }
