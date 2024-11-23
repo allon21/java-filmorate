@@ -92,8 +92,7 @@ public class InMemoryUserStorage implements UserStorage {
             throw new EmptyIdException();
         }
         if (!users.containsKey(id)) {
-            throw new NotFoundException(String.format("Пользователь с запрашиваемым id=%d не зарегестрирован." +
-                    " Кол-во пользователей: %d", id, users.size()));
+            throw new NotFoundException("User с id =  " + id + "не найден.");
         }
         return users.get(id);
     }
