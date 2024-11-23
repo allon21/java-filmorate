@@ -19,6 +19,7 @@ public class User {
     private String name;
     @PastOrPresent
     private LocalDate birthday;
+    @Builder.Default
     private Set<Integer> friends = new HashSet<>();
 
 }

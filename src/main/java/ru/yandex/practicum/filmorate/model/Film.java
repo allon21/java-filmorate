@@ -22,5 +22,6 @@ public class Film {
     private LocalDate releaseDate;
     @Positive
     private int duration;
+    @Builder.Default
     private Set<Integer> idUsersLikedFilm = new HashSet<>();
 }
