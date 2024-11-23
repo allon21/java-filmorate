@@ -33,4 +33,10 @@ public class HandlerException {
         errors.put("Internal exception occured", e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errors);
     }
+
+    @ExceptionHandler(EmptyIdException.class)
+    public ResponseEntity<?> EmptyIdException(EmptyIdException e) {
+        Map<String, String> errors = new HashMap<>();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
+    }
 }
