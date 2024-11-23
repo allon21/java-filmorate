@@ -1,8 +1,11 @@
 package ru.yandex.practicum.filmorate.model;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.Builder;
 import lombok.Data;
-import jakarta.validation.constraints.*;
+
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
