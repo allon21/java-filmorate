@@ -51,4 +51,9 @@ public class UserController {
         return userService.getUserStorage().getUserFriends(id);
     }
 
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Integer id) {
+        return userService.findUserById(id);
+    }
+
 }

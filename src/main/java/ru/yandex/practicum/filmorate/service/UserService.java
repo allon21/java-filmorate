@@ -28,6 +28,13 @@ public class UserService {
         return userStorage.getAllUsers();
     }
 
+    public User findUserById(Integer id) {
+        if (id <= 0) {
+            throw new EmptyIdException();
+        }
+        return userStorage.findUserById(id);
+    }
+
     public User update(User user) {
         if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());

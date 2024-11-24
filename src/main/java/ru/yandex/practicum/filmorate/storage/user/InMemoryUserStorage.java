@@ -105,7 +105,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     private int getNextId() {
-        Integer currentMaxId = users.keySet()
+        int currentMaxId = users.keySet()
                 .stream()
                 .mapToInt(id -> id)
                 .max()

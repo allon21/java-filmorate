@@ -27,15 +27,16 @@ public class HandlerException {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
     }
 
+    @ExceptionHandler(EmptyIdException.class)
+    public ResponseEntity<?> emptyIdException(EmptyIdException e) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("Ошибка идентификатора", e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleAllExceptions(Exception e) {
         log.error("Произошла ошибка: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Произошла ошибка: " + e.getMessage());
-    }
-
-    @ExceptionHandler(EmptyIdException.class)
-    public ResponseEntity<?> emptyIdException(EmptyIdException e) {
-        Map<String, String> errors = new HashMap<>();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errors);
     }
 }
