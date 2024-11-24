@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
-    private final Map<Long, Film> films = new HashMap<>();
+    private final Map<Integer, Film> films = new HashMap<>();
 
     @Override
     public List<Film> getAllFilms() {
@@ -35,7 +35,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Map<Long, Film> getFilms() {
+    public Map<Integer, Film> getFilms() {
         return films;
     }
 
@@ -88,10 +88,10 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
-    private long getNextId() {
-        long currentMaxId = films.keySet()
+    private int getNextId() {
+        int currentMaxId = films.keySet()
                 .stream()
-                .mapToLong(id -> id)
+                .mapToInt(id -> id)
                 .max()
                 .orElse(0);
         return ++currentMaxId;

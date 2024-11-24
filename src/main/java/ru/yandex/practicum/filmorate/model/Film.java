@@ -12,7 +12,7 @@ import java.util.Set;
 @Builder
 public class Film {
 
-    private long id;
+    private Integer id;
     @NotBlank
     private String name;
     @Size(max = 200)

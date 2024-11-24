@@ -16,7 +16,7 @@ public interface FilmStorage {
 
     List<Film> getAllFilms();
 
-    Map<Long, Film> getFilms();
+    Map<Integer, Film> getFilms();
 
     boolean isEmpty();
 
