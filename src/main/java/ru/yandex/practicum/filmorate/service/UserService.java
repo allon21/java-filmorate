@@ -94,11 +94,27 @@ public class UserService {
         if (userStorage.getUserFriends(user).isEmpty()) {
             return;
         }
+        User userObj = userStorage.findUserById(user);
+        User friendObj = userStorage.findUserById(friend);
+
+        if (userObj == null) {
+            throw new NotFoundException(userObj);
+        }
+        if (friendObj == null) {
+            throw new NotFoundException(friendObj);
+        }
+        if (userObj.getFriends() == null) {
+            userObj.setFriends(new HashSet<>());
+        }
+        if (friendObj.getFriends() == null) {
+            friendObj.setFriends(new HashSet<>());
+
+        }
         if (!userStorage.findUserById(user).getFriends().contains(friend)) {
             throw new NotFoundException(userStorage.findUserById(friend));
         }
-        userStorage.findUserById(user).getFriends().remove(friend);
-        userStorage.findUserById(friend).getFriends().remove(user);
+        userObj.getFriends().remove(friend);
+        friendObj.getFriends().remove(user);
     }
 
     public List<User> getCommonFriends(Integer user, Integer friend) {
