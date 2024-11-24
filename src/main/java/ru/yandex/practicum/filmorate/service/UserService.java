@@ -66,8 +66,18 @@ public class UserService {
         if (user <= 0 || friend <= 0) {
             throw new EmptyIdException();
         }
-        userStorage.findUserById(user).getFriends().add(friend);
-        userStorage.findUserById(friend).getFriends().add(user);
+        User userObj = userStorage.findUserById(user);
+        User friendObj = userStorage.findUserById(friend);
+
+        if (userObj == null) {
+            throw new NotFoundException(userObj);
+        }
+        if (friendObj == null) {
+            throw new NotFoundException(friendObj);
+        }
+
+        userObj.getFriends().add(friend);
+        friendObj.getFriends().add(user);
     }
 
     public void removeFriend(Integer user, Integer friend) {
