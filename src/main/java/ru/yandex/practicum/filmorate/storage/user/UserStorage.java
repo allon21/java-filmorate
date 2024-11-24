@@ -12,7 +12,7 @@ public interface UserStorage {
 
     void remove(int id);
 
-    Map<Long, User> getUsers();
+    Map<Integer, User> getUsers();
 
     List<User> getAllUsers();
 

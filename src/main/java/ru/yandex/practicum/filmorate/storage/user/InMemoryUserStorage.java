@@ -14,10 +14,10 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
-    private Map<Long, User> users = new HashMap<>();
+    private Map<Integer, User> users = new HashMap<>();
 
     @Override
-    public Map<Long, User> getUsers() {
+    public Map<Integer, User> getUsers() {
         return users;
     }
 
@@ -104,10 +104,10 @@ public class InMemoryUserStorage implements UserStorage {
                 .collect(Collectors.toList());
     }
 
-    private long getNextId() {
-        long currentMaxId = users.keySet()
+    private int getNextId() {
+        Integer currentMaxId = users.keySet()
                 .stream()
-                .mapToLong(id -> id)
+                .mapToInt(id -> id)
                 .max()
                 .orElse(0);
         return ++currentMaxId;
