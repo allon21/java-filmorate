@@ -29,8 +29,8 @@ public class HandlerException {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleAllExceptions(Exception e) {
-        Map<String, String> errors = new HashMap<>();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errors);
+        log.error("Произошла ошибка: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Произошла ошибка: " + e.getMessage());
     }
 
     @ExceptionHandler(EmptyIdException.class)

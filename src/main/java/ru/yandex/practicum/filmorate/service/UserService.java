@@ -56,11 +56,17 @@ public class UserService {
     }
 
     public void addFriend(Integer user, Integer friend) {
+        if (user <= 0 || friend <= 0) {
+            throw new EmptyIdException();
+        }
         userStorage.findUserById(user).getFriends().add(friend);
         userStorage.findUserById(friend).getFriends().add(user);
     }
 
     public void removeFriend(Integer user, Integer friend) {
+        if (user <= 0 || friend <= 0) {
+            throw new EmptyIdException();
+        }
         if (userStorage.getUserFriends(user).isEmpty()) {
             return;
         }
