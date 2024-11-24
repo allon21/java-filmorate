@@ -22,10 +22,9 @@ public class Film {
     private LocalDate releaseDate;
     @Positive
     private int duration;
-    @Builder.Default
     private Set<Integer> idUsersLikedFilm = new HashSet<>();
 
     public static Integer getFilmsLikes(Film film) {
-        return film.getIdUsersLikedFilm().size();
+        return film.getIdUsersLikedFilm() != null ? film.getIdUsersLikedFilm().size() : 0;
     }
 }
