@@ -108,7 +108,6 @@ public class UserService {
         }
         if (friendObj.getFriends() == null) {
             friendObj.setFriends(new HashSet<>());
-
         }
         if (!userStorage.findUserById(user).getFriends().contains(friend)) {
             throw new NotFoundException(userStorage.findUserById(friend));

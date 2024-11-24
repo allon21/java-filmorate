@@ -75,7 +75,16 @@ public class InMemoryUserStorage implements UserStorage {
         if (id <= 0) {
             throw new EmptyIdException();
         }
-        Set<Integer> users = findUserById(id).getFriends();
+        User userObj = findUserById(id);
+
+        if (userObj == null) {
+            throw new NotFoundException(userObj);
+        }
+        if (userObj.getFriends() == null) {
+            userObj.setFriends(new HashSet<>());
+        }
+
+        Set<Integer> users = userObj.getFriends();
         List<User> usersFriends = new ArrayList<>();
 
         if (!users.isEmpty()) {
