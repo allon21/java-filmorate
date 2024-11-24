@@ -40,7 +40,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film updateFilm(Film film) throws ValidationException {
+    public Film updateFilm(Film film) {
         if (!films.containsKey(film.getId())) {
             throw new NotFoundException("Фильм с таким ID не найден");
         }
@@ -62,7 +62,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film addFilm(Film film) throws ValidationException {
+    public Film addFilm(Film film) {
         if (films.containsKey(film.getId())) {
             log.error("Попытка добавить фильм, который уже существует: {}", film.getName());
             throw new ValidationException("Такой фильм уже добавлен.");

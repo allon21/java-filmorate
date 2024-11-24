@@ -22,7 +22,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User create(User user) throws ValidationException {
+    public User create(User user) {
         if (users.containsValue(user)) {
             log.error("Попытка создать пользователя, который уже существует: {}", user.getLogin());
             throw new ValidationException("Такой пользователь уже существует.");
@@ -49,7 +49,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User update(User user) throws ValidationException {
+    public User update(User user) {
         if (!users.containsKey(user.getId())) {
             throw new NotFoundException("Пользователь с таким ID не найден");
         }
