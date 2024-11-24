@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 
 @Slf4j
@@ -75,7 +76,13 @@ public class UserService {
         if (friendObj == null) {
             throw new NotFoundException(friendObj);
         }
+        if (userObj.getFriends() == null) {
+            userObj.setFriends(new HashSet<>());
+        }
+        if (friendObj.getFriends() == null) {
+            friendObj.setFriends(new HashSet<>());
 
+        }
         userObj.getFriends().add(friend);
         friendObj.getFriends().add(user);
     }
