@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 
 @Slf4j
@@ -66,7 +67,14 @@ public class FilmService {
         if (!userStorage.getUsers().containsKey(userId)) {
             throw new NotFoundException("User с id " + userId + "не найден.");
         }
-        findFilmById(filmId).getIdUsersLikedFilm().add(userId);
+        Film film = findFilmById(filmId);
+        if (film == null) {
+            throw new NotFoundException(film);
+        }
+        if (findFilmById(filmId).getIdUsersLikedFilm() == null) {
+            film.setIdUsersLikedFilm(new HashSet<>());
+        }
+        film.getIdUsersLikedFilm().add(userId);
     }
 
     public void removeLike(Integer filmId, Integer userId) {
@@ -79,7 +87,14 @@ public class FilmService {
         if (findFilmById(filmId).getIdUsersLikedFilm().isEmpty()) {
             throw new NotFoundException("Список фильмов пуст.");
         }
-        findFilmById(filmId).getIdUsersLikedFilm().remove(userId);
+        Film film = findFilmById(filmId);
+        if (film == null) {
+            throw new NotFoundException(film);
+        }
+        if (findFilmById(filmId).getIdUsersLikedFilm() == null) {
+            film.setIdUsersLikedFilm(new HashSet<>());
+        }
+        film.getIdUsersLikedFilm().remove(userId);
     }
 
     public List<Film> getTopFilmsByLikes(Integer count) {
