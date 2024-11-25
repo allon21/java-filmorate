@@ -112,6 +112,7 @@ public class UserService {
             user.setName(user.getLogin());
         }
     }
+
     private void validateUserId(Integer id) {
         if (id <= 0) {
             throw new EmptyIdException();

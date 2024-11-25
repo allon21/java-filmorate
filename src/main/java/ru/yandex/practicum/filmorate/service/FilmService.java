@@ -121,5 +121,4 @@ public class FilmService {
             throw new NotFoundException("User с id " + id + " не найден.");
         }
     }
-
 }
