@@ -31,42 +31,23 @@ public class FilmService {
     }
 
     public Film addFilm(Film film) {
-        if (film.getName() == null || film.getName().isBlank()) {
-            log.error("Ошибка валидации: название фильма не может быть пустым");
-            throw new ValidationException("Название фильма не может быть пустым");
-        }
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года;");
-        }
-        if (film.getDuration() <= 0) {
-            log.error("Ошибка валидации: продолжительность фильма должна быть положительным числом");
-            throw new ValidationException("Продолжительность фильма должна быть положительным числом");
-        }
-        if (film.getDescription() != null && film.getDescription().length() > 200) {
-            log.error("Ошибка валидации: максимальная длина описания — 200 символов");
-            throw new ValidationException("Максимальная длина описания — 200 символов");
-        }
+        validateFilm(film);
         return filmStorage.addFilm(film);
     }
 
     public Film updateFilm(Film film) {
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года;");
-        }
+        validateFilm(film);
         return filmStorage.updateFilm(film);
     }
 
     public Film getFilmById(Integer id) {
+        validateFilmId(id);
         return filmStorage.getFilmById(id);
     }
 
     public void addLike(Integer filmId, Integer userId) {
-        if (filmId <= 0 || userId <= 0) {
-            throw new EmptyIdException();
-        }
-        if (!userStorage.getUsers().containsKey(userId)) {
-            throw new NotFoundException("User с id " + userId + "не найден.");
-        }
+        validateFilmId(filmId);
+        validateUserId(userId);
         Film film = findFilmById(filmId);
         if (film == null) {
             throw new NotFoundException(film);
@@ -78,12 +59,8 @@ public class FilmService {
     }
 
     public void removeLike(Integer filmId, Integer userId) {
-        if (filmId <= 0 || userId <= 0) {
-            throw new EmptyIdException();
-        }
-        if (!userStorage.getUsers().containsKey(userId)) {
-            throw new NotFoundException("User с id " + userId + "не найден.");
-        }
+        validateFilmId(filmId);
+        validateUserId(userId);
         if (findFilmById(filmId).getIdUsersLikedFilm().isEmpty()) {
             throw new NotFoundException("Список фильмов пуст.");
         }
@@ -105,13 +82,44 @@ public class FilmService {
     }
 
     public Film findFilmById(Integer id) {
-        if (id <= 0) {
-            throw new EmptyIdException();
-        }
+        validateFilmId(id);
         if (!filmStorage.getFilms().containsKey(id)) {
             throw new NotFoundException("Фильм с запрашиваемым " + id + " отсутствует.)");
         }
         return filmStorage.getFilms().get(id);
+    }
+
+    private void validateFilm(Film film) {
+        if (film.getName() == null || film.getName().isBlank()) {
+            log.error("Ошибка валидации: название фильма не может быть пустым");
+            throw new ValidationException("Название фильма не может быть пустым");
+        }
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года;");
+        }
+        if (film.getDuration() <= 0) {
+            log.error("Ошибка валидации: продолжительность фильма должна быть положительным числом");
+            throw new ValidationException("Продолжительность фильма должна быть положительным числом");
+        }
+        if (film.getDescription() != null && film.getDescription().length() > 200) {
+            log.error("Ошибка валидации: максимальная длина описания — 200 символов");
+            throw new ValidationException("Максимальная длина описания — 200 символов");
+        }
+    }
+
+    private void validateFilmId(Integer id) {
+        if (id <= 0) {
+            throw new EmptyIdException();
+        }
+    }
+
+    private void validateUserId(Integer id) {
+        if (id <= 0) {
+            throw new EmptyIdException();
+        }
+        if (!userStorage.getUsers().containsKey(id)) {
+            throw new NotFoundException("User с id " + id + " не найден.");
+        }
     }
 
 }
