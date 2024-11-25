@@ -1,80 +1,54 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/films")
 @Slf4j
 public class FilmController {
-    @NotNull
-    private final Map<Long, Film> films = new HashMap<>();
+    private final FilmService filmService;
 
     @GetMapping
     public List<Film> getAllFilms() {
-        log.info("Получение списка всех фильмов.");
-        return new ArrayList<>(films.values());
+        return filmService.getAllFilms();
     }
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
-        if (!films.containsKey(film.getId())) {
-            log.error("Попытка обновления несуществующего фильма с ID: {}", film.getId());
-            throw new NotFoundException("Фильм с таким ID не найден");
-        }
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года;");
-        }
-        films.put(film.getId(), film);
-        log.info("Обновлен фильм с ID: {}", film.getId());
-        return film;
+        return filmService.updateFilm(film);
     }
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
-        if (films.containsValue(film)) {
-            log.error("Попытка добавить фильм, который уже существует: {}", film.getName());
-            throw new ValidationException("Такой фильм уже добавлен.");
-        }
-        if (film.getName() == null || film.getName().isBlank()) {
-            log.error("Ошибка валидации: название фильма не может быть пустым");
-            throw new ValidationException("Название фильма не может быть пустым");
-        }
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года;");
-        }
-        if (film.getDuration() <= 0) {
-            log.error("Ошибка валидации: продолжительность фильма должна быть положительным числом");
-            throw new ValidationException("Продолжительность фильма должна быть положительным числом");
-        }
-        if (film.getDescription() != null && film.getDescription().length() > 200) {
-            log.error("Ошибка валидации: максимальная длина описания — 200 символов");
-            throw new ValidationException("Максимальная длина описания — 200 символов");
-        }
-        film.setId(getNextId());
-        films.put(film.getId(), film);
-        log.info("Фильм добавлен: {}", film);
-        return film;
+        return filmService.addFilm(film);
     }
 
-    private long getNextId() {
-        long currentMaxId = films.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    @GetMapping("/{id}")
+    public Film getFilm(@PathVariable Integer id) {
+        return filmService.getFilmById(id);
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public void addLike(@PathVariable Integer id, @PathVariable Integer userId) {
+        filmService.addLike(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public void removeLike(@PathVariable Integer id, @PathVariable Integer userId) {
+        filmService.removeLike(id, userId);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getTopPopular(@RequestParam(defaultValue = "10", required = false) Integer count) {
+        return filmService.getTopFilmsByLikes(count);
     }
 
 }
