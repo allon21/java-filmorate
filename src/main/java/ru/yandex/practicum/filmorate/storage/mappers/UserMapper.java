@@ -1,10 +1,11 @@
 package ru.yandex.practicum.filmorate.storage.mappers;
 
 import org.springframework.jdbc.core.RowMapper;
+import ru.yandex.practicum.filmorate.model.User;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import ru.yandex.practicum.filmorate.model.User;
 
 public class UserMapper implements RowMapper<User> {
     @Override

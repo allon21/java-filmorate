@@ -31,7 +31,7 @@ public class UserDbStorage implements UserStorage {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sql, new String[] {"user_id"});
+            PreparedStatement ps = connection.prepareStatement(sql, new String[]{"user_id"});
             ps.setString(1, user.getName());
             ps.setString(2, user.getEmail());
             ps.setString(3, user.getLogin());
@@ -148,4 +148,4 @@ public class UserDbStorage implements UserStorage {
                 "WHERE f1.user_id = ? AND f2.user_id = ?";
         return jdbcTemplate.query(sql, new UserMapper(), id, otherId);
     }
-    }
+}
