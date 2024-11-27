@@ -1,30 +1,36 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
-import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
-@Builder
 public class Film {
-
-    private Integer id;
+    @NotNull
+    private Long id;
     @NotBlank
     private String name;
+    @NotBlank
     @Size(max = 200)
     private String description;
+    @NotNull
+    private Mpa mpa;
     @NotNull
     @PastOrPresent
     private LocalDate releaseDate;
     @Positive
     private int duration;
-    private Set<Integer> idUsersLikedFilm = new HashSet<>();
+    @JsonIgnore
+    private Set<Long> idUsersLikedFilm = new HashSet<>();
 
-    public static Integer getFilmsLikes(Film film) {
-        return film.getIdUsersLikedFilm() != null ? film.getIdUsersLikedFilm().size() : 0;
+    private List<Genre> genres;
+
+    public static Long getFilmsLikes(Film film) {
+        return (long) (film.getIdUsersLikedFilm() != null ? film.getIdUsersLikedFilm().size() : 0);
     }
 }

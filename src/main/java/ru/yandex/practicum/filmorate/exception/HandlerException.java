@@ -20,6 +20,13 @@ public class HandlerException {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Error> handleBadRequestException(Exception e) {
+        log.error("Ошибка", e);
+        Error error = new Error(e.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<?> notFoundException(NotFoundException e) {
         Map<String, String> errors = new HashMap<>();
