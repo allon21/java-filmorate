@@ -29,7 +29,7 @@ public class UserService {
         return userStorage.getAllUsers();
     }
 
-    public User findUserById(Integer id) {
+    public User findUserById(Long id) {
         validateUserId(id);
         return userStorage.findUserById(id);
     }
@@ -44,47 +44,35 @@ public class UserService {
         return userStorage.create(user);
     }
 
-    public void addFriend(Integer user, Integer friend) {
+    public void addFriend(Long user, Long friend) {
+        userStorage.userExist(user);
+        userStorage.userExist(friend);
         validateUserId(user);
         validateUserId(friend);
-        User[] users = initializeUsers(user, friend);
-        User userObj = users[0];
-        User friendObj = users[1];
-        userObj.getFriends().add(friend);
-        friendObj.getFriends().add(user);
+        userStorage.addFriend(user, friend);
     }
 
-    public void removeFriend(Integer user, Integer friend) {
-        validateUserId(user);
-        validateUserId(friend);
-        if (userStorage.getUserFriends(user).isEmpty()) {
-            return;
-        }
-        User[] users = initializeUsers(user, friend);
-        User userObj = users[0];
-        User friendObj = users[1];
-        if (!userStorage.findUserById(user).getFriends().contains(friend)) {
-            throw new NotFoundException(userStorage.findUserById(friend));
-        }
-        userObj.getFriends().remove(friend);
-        friendObj.getFriends().remove(user);
+    public void removeFriend(Long user, Long friend) {
+        userStorage.userExist(user);
+        userStorage.userExist(friend);
+        userStorage.removeFriend(user, friend);
     }
 
-    public List<User> getCommonFriends(Integer user, Integer friend) {
+    public List<User> getCommonFriends(Long user, Long friend) {
         validateUserId(user);
         validateUserId(friend);
         return userStorage.getCommonFriends(user, friend);
     }
 
-    private User[] initializeUsers(Integer userId, Integer friendId) {
+    private User[] initializeUsers(Long userId, Long friendId) {
         User userObj = userStorage.findUserById(userId);
         User friendObj = userStorage.findUserById(friendId);
 
         if (userObj == null) {
-            throw new NotFoundException(userObj);
+            throw new NotFoundException("Пользователь с ID " + userId + " не найден.");
         }
         if (friendObj == null) {
-            throw new NotFoundException(friendObj);
+            throw new NotFoundException("Пользователь с ID " + friendId + " не найден.");
         }
         if (userObj.getFriends() == null) {
             userObj.setFriends(new HashSet<>());
@@ -113,9 +101,14 @@ public class UserService {
         }
     }
 
-    private void validateUserId(Integer id) {
+    private void validateUserId(Long id) {
         if (id <= 0) {
             throw new EmptyIdException();
         }
+    }
+
+    public List<User> getUserFriends(Long id) {
+        userStorage.userExist(id);
+        return userStorage.getUserFriends(id);
     }
 }

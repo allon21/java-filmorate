@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.exception.EmptyIdException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -19,11 +20,13 @@ import java.util.List;
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+    private final GenreService genreService;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage, GenreService genreService) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
+        this.genreService = genreService;
     }
 
     public List<Film> getAllFilms() {
@@ -32,6 +35,15 @@ public class FilmService {
 
     public Film addFilm(Film film) {
         validateFilm(film);
+        if (film.getGenres() != null) {
+            film.getGenres().forEach(genre -> {
+                try {
+                    genreService.genreExist(genre.getId());
+                } catch (Exception e) {
+                    throw new BadRequestException(e.getMessage());
+                }
+            });
+        }
         return filmStorage.addFilm(film);
     }
 
@@ -40,48 +52,32 @@ public class FilmService {
         return filmStorage.updateFilm(film);
     }
 
-    public Film getFilmById(Integer id) {
+    public Film getFilmById(Long id) {
         validateFilmId(id);
-        return filmStorage.getFilmById(id);
+        Film film = filmStorage.getFilmById(id);
+        return film;
     }
 
-    public void addLike(Integer filmId, Integer userId) {
+    public void addLike(Long filmId, Long userId) {
         validateFilmId(filmId);
         validateUserId(userId);
-        Film film = findFilmById(filmId);
-        if (film == null) {
-            throw new NotFoundException(film);
-        }
-        if (findFilmById(filmId).getIdUsersLikedFilm() == null) {
-            film.setIdUsersLikedFilm(new HashSet<>());
-        }
-        film.getIdUsersLikedFilm().add(userId);
+        filmStorage.addLike(filmId, userId);
     }
 
-    public void removeLike(Integer filmId, Integer userId) {
+    public void removeLike(Long filmId, Long userId) {
         validateFilmId(filmId);
         validateUserId(userId);
-        if (findFilmById(filmId).getIdUsersLikedFilm().isEmpty()) {
-            throw new NotFoundException("Список фильмов пуст.");
-        }
-        Film film = findFilmById(filmId);
-        if (film == null) {
-            throw new NotFoundException(film);
-        }
-        if (findFilmById(filmId).getIdUsersLikedFilm() == null) {
-            film.setIdUsersLikedFilm(new HashSet<>());
-        }
-        film.getIdUsersLikedFilm().remove(userId);
+        filmStorage.removeLike(filmId, userId);
     }
 
-    public List<Film> getTopFilmsByLikes(Integer count) {
+    public List<Film> getTopFilmsByLikes(int count) {
         if (filmStorage.isEmpty()) {
             throw new NotFoundException("Список фильмов пуст.");
         }
         return filmStorage.getTopFilms(count);
     }
 
-    public Film findFilmById(Integer id) {
+    public Film findFilmById(Long id) {
         validateFilmId(id);
         if (!filmStorage.getFilms().containsKey(id)) {
             throw new NotFoundException("Фильм с запрашиваемым " + id + " отсутствует.)");
@@ -107,13 +103,13 @@ public class FilmService {
         }
     }
 
-    private void validateFilmId(Integer id) {
-        if (id <= 0) {
+    private void validateFilmId(Long id) {
+        if (id <= 0 || id == null) {
             throw new EmptyIdException();
         }
     }
 
-    private void validateUserId(Integer id) {
+    private void validateUserId(Long id) {
         if (id <= 0) {
             throw new EmptyIdException();
         }

@@ -10,15 +10,20 @@ public interface UserStorage {
 
     User update(User user);
 
-    void remove(int id);
-
-    Map<Integer, User> getUsers();
+    Map<Long, User> getUsers();
 
     List<User> getAllUsers();
 
-    List<User> getUserFriends(Integer id);
+    List<User> getUserFriends(Long id);
 
-    User findUserById(Integer id);
+    void userExist(Long id);
 
-    List<User> getCommonFriends(Integer user, Integer friend);
+    User findUserById(Long id);
+
+    List<User> getCommonFriends(Long user, Long friend);
+
+    void addFriend(Long id, Long friendId);
+
+    void removeFriend(Long id, Long friendId);
+
 }
