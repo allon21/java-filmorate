@@ -58,14 +58,14 @@ public class FilmService {
     }
 
     public void addLike(Long filmId, Long userId) {
-        validateFilmId(filmId);
-        validateUserId(userId);
+        userStorage.userExist(userId);
+        filmStorage.filmExist(filmId);
         filmStorage.addLike(filmId, userId);
     }
 
     public void removeLike(Long filmId, Long userId) {
-        validateFilmId(filmId);
-        validateUserId(userId);
+        userStorage.userExist(userId);
+        filmStorage.filmExist(filmId);
         filmStorage.removeLike(filmId, userId);
     }
 

@@ -63,27 +63,6 @@ public class FilmDbStorage implements FilmStorage {
     }
 
 
-/*    private void saveFilmGenres(Film film) {
-        // filmExist(film.getId());
-        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM film WHERE film_id = ?", Integer.class, film.getId());
-        log.info("TEST count  :" + count);
-*//*        if (film.getGenres() != null || !film.getGenres().isEmpty()) {
-            log.info("Объект : " + film.getId() + " <<<<  " + film.getGenres() + " .");
-            jdbcTemplate.batchUpdate("INSERT INTO film_genre (film_id, genre_id) VALUES (?, ?)",
-                    film.getGenres().stream()
-                            .distinct()
-                            .map(genre -> new Object[]{film.getId(), genre.getId()})
-                            .toList());
-        }*//*
-        String sql = "INSERT INTO film_genre (film_id, genre_id) VALUES (?, ?)";
-
-        for (Genre genre : film.getGenres()) {
-            log.info("Объект : {} <<<<  {}", film.getId(), genre.getId());
-            jdbcTemplate.update(sql, film.getId(), genre.getId());
-        }
-
-    }*/
-
     private void saveFilmGenres(Film film) {
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
             String sql = "INSERT INTO film_genre (film_id, genre_id) VALUES (?, ?)";
