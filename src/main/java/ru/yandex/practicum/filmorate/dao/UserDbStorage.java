@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -79,9 +80,13 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void userExist(Long id) {
-        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM user_info WHERE user_id = ?", Integer.class, id);
-        if (count == 0 || count == null) {
-            throw new NotFoundException("Пользователь с ID " + id + " не найден.");
+        try {
+            Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM user_info WHERE user_id = ?", Integer.class, id);
+            if (count == 0 || count == null) {
+                throw new NotFoundException("Пользователь с ID " + id + " не найден.");
+            }
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Ошибка доступа к данным: " + e.getMessage(), e);
         }
     }
 

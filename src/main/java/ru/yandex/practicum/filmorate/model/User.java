@@ -9,7 +9,6 @@ import java.util.Set;
 
 @Data
 public class User {
-    @Null
     @NotNull
     private Long id;
     @NotBlank

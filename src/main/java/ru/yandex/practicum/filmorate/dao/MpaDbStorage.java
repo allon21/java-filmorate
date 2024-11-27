@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.dao;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -31,9 +32,13 @@ public class MpaDbStorage implements MpaStorage {
 
     @Override
     public void mpaExist(Long id) {
-        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM mpa_rating WHERE rating_id = ?", Integer.class, id);
-        if (count == 0 || count == null) {
-            throw new NotFoundException("Рейтинг с ID " + id + " не найден.");
+        try {
+            Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM mpa_rating WHERE rating_id = ?", Integer.class, id);
+            if (count == 0 || count == null) {
+                throw new NotFoundException("Рейтинг с ID " + id + " не найден.");
+            }
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Ошибка доступа к данным: " + e.getMessage(), e);
         }
     }
 }

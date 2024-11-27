@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.dao;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -16,6 +17,7 @@ import ru.yandex.practicum.filmorate.storage.mappers.GenreMapper;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -54,10 +56,7 @@ public class FilmDbStorage implements FilmStorage {
         log.info("film id : " + film.getId());
         log.info("film : " + film);
 
-        // Проверка существования фильма
-        Integer filmCountCheck = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM film WHERE film_id = ?", Integer.class, generatedId);
-        assert filmCountCheck != null && filmCountCheck > 0 : "Фильм с ID " + generatedId + " не найден после вставки!";
-
+        filmExist(film.getId());
         saveFilmGenres(film);
         return film;
     }
@@ -119,10 +118,13 @@ public class FilmDbStorage implements FilmStorage {
 
     private Map<Long, List<Genre>> getGenresForFilms() {
         String sqlGenre = "SELECT film_id, genre.genre_id, genre.name FROM film_genre JOIN genre ON genre.genre_id = film_genre.genre_id";
-        return jdbcTemplate.query(sqlGenre, (rs, rowNum) -> new Genre(rs.getLong("genre_id"),
-                        rs.getString("name")))
-                .stream()
-                .collect(Collectors.groupingBy(Genre::getId));
+
+        return jdbcTemplate.query(sqlGenre, (rs, rowNum) -> {
+            Long filmId = rs.getLong("film_id");
+            Genre genre = new Genre(rs.getLong("genre_id"), rs.getString("name"));
+            return new AbstractMap.SimpleEntry<>(filmId, genre);
+        }).stream().collect(Collectors.groupingBy(Map.Entry::getKey,
+                Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
     }
 
     @Override
@@ -141,9 +143,14 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void filmExist(Long id) {
-        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM film WHERE film_id = ?", Integer.class, id);
-        if (count == 0 || count == null) {
-            throw new NotFoundException("Фильм с ID " + id + " не найден.");
+        try {
+            Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM film WHERE film_id = ?", Integer.class, id);
+
+            if (count == null || count == 0) {
+                throw new NotFoundException("Фильм с ID " + id + " не найден.");
+            }
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Ошибка доступа к данным: " + e.getMessage(), e);
         }
     }
 
